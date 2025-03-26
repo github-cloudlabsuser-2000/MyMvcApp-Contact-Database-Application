@@ -133,4 +133,38 @@ public class UserController : Controller
         // Redirect to the Index action
         return RedirectToAction(nameof(Index));
     }
+
+    public ActionResult Search(string? name)
+    {
+        // Check if the userlist is empty
+        if (!userlist.Any())
+        {
+            // Return a view with a message indicating that the list is empty
+            ViewBag.Message = "The user list is empty.";
+            return View("Index", new List<User>());
+        }
+
+        // If name is null or empty, return the entire user list
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ViewBag.Message = "Showing all users.";
+            return View("Index", userlist);
+        }
+
+        // Filter the user list by partial name match
+        var filteredUsers = userlist
+            .Where(u => u.Name.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+            .ToList();
+
+        // Check if no users match the search criteria
+        if (!filteredUsers.Any())
+        {
+            // Return a view with a message indicating no users were found
+            ViewBag.Message = $"No users found containing the name '{name}'.";
+            return View("Index", new List<User>());
+        }
+
+        // Pass the filtered users to the Index view
+        return View("Index", filteredUsers);
+    }
 }
