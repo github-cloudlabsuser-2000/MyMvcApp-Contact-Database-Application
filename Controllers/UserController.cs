@@ -8,59 +8,129 @@ public class UserController : Controller
 {
     public static System.Collections.Generic.List<User> userlist = new System.Collections.Generic.List<User>();
 
-        // GET: User
-        public ActionResult Index()
+    // GET: User
+    public ActionResult Index()
+    {
+        // Pass the userlist to the view
+        return View(userlist);
+    }
+
+    // GET: User/Details/5
+    public ActionResult Details(int id)
+    {
+        // Find the user with the specified ID
+        var user = userlist.FirstOrDefault(u => u.Id == id);
+
+        // If the user is not found, return a NotFound result
+        if (user == null)
         {
-            // Implement the Index method here
+            return NotFound();
         }
 
-        // GET: User/Details/5
-        public ActionResult Details(int id)
+        // Pass the user to the Details view
+        return View(user);
+    }
+
+    // GET: User/Create
+    public ActionResult Create()
+    {
+        // Return the Create view to allow the user to input data for a new user
+        return View();
+    }
+
+    // POST: User/Create
+    [HttpPost]
+    public ActionResult Create(User user)
+    {
+        if (ModelState.IsValid)
         {
-            // Implement the details method here
+            // Add the new user to the userlist
+            userlist.Add(user);
+
+            // Redirect to the Index action
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: User/Create
-        public ActionResult Create()
+        // If the model state is invalid, return the Create view with the current user data
+        return View(user);
+    }
+
+    // GET: User/Edit/5
+    public ActionResult Edit(int id)
+    {
+        // Retrieve the user with the specified ID
+        var user = userlist.FirstOrDefault(u => u.Id == id);
+
+        // If the user is not found, return a NotFound result
+        if (user == null)
         {
-            //Implement the Create method here
+        return NotFound();
         }
 
-        // POST: User/Create
-        [HttpPost]
-        public ActionResult Create(User user)
+        // Pass the user to the Edit view
+        return View(user);
+    }
+
+    // POST: User/Edit/5
+    [HttpPost]
+    public ActionResult Edit(int id, User user)
+    {
+        if (ModelState.IsValid)
         {
-            // Implement the Create method (POST) here
+        // Find the existing user in the list
+        var existingUser = userlist.FirstOrDefault(u => u.Id == id);
+
+        // If the user is not found, return a NotFound result
+        if (existingUser == null)
+        {
+            return NotFound();
         }
 
-        // GET: User/Edit/5
-        public ActionResult Edit(int id)
-        {
-            // This method is responsible for displaying the view to edit an existing user with the specified ID.
-            // It retrieves the user from the userlist based on the provided ID and passes it to the Edit view.
+        // Update the user's properties
+        existingUser.Name = user.Name;
+        existingUser.Email = user.Email;
+
+        // Redirect to the Index action
+        return RedirectToAction(nameof(Index));
         }
 
-        // POST: User/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, User user)
+        // If the model state is invalid, return the Edit view with the current user data
+        return View(user);
+    }
+
+    // GET: User/Delete/5
+    public ActionResult Delete(int id)
+    {
+        // Retrieve the user with the specified ID
+        var user = userlist.FirstOrDefault(u => u.Id == id);
+
+        // If the user is not found, return a NotFound result
+        if (user == null)
         {
-            // This method is responsible for handling the HTTP POST request to update an existing user with the specified ID.
-            // It receives user input from the form submission and updates the corresponding user's information in the userlist.
-            // If successful, it redirects to the Index action to display the updated list of users.
-            // If no user is found with the provided ID, it returns a HttpNotFoundResult.
-            // If an error occurs during the process, it returns the Edit view to display any validation errors.
+            return NotFound();
         }
 
-        // GET: User/Delete/5
-        public ActionResult Delete(int id)
+        // Pass the user to the Delete view
+        return View(user);
+    }
+
+    // POST: User/Delete/5
+    [HttpPost]
+    public ActionResult Delete(int id, IFormCollection collection)
+    {
+        // Find the user in the list
+        var user = userlist.FirstOrDefault(u => u.Id == id);
+
+        // If the user is not found, return a NotFound result
+        if (user == null)
         {
-            // Implement the Delete method here
+            return NotFound();
         }
 
-        // POST: User/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            // Implement the Delete method (POST) here
-        }
+        // Remove the user from the list
+        userlist.Remove(user);
+
+        // Redirect to the Index action
+        return RedirectToAction(nameof(Index));
+    }
 }
